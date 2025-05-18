@@ -2,25 +2,35 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { addDoc, collection } from 'firebase/firestore'
-import { db } from '@/lib/firebase'
+import { useFirebase } from '@/hooks/use-firebase'
 
 export function Newsletter() {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const { addDocument, checkEmailExists, error, loading } = useFirebase()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setStatus('loading')
 
     try {
-      await addDoc(collection(db, 'newsletter'), {
-        email,
-        createdAt: new Date().toISOString(),
-      })
-      setStatus('success')
-      setEmail('')
+      // Check if email already exists
+      const exists = await checkEmailExists(email)
+      if (exists) {
+        setStatus('error')
+        return
+      }
+
+      // Add new subscription
+      const docId = await addDocument('newsletter', { email })
+      if (docId) {
+        setStatus('success')
+        setEmail('')
+      } else {
+        setStatus('error')
+      }
     } catch (error) {
+      console.error('Newsletter subscription error:', error)
       setStatus('error')
     }
   }

@@ -1,7 +1,6 @@
 "use client"
 
 import { motion } from 'framer-motion'
-import { useInView } from 'react-intersection-observer'
 
 const stats = [
   { label: "Projects Completed", value: "150+" },
@@ -11,23 +10,16 @@ const stats = [
 ]
 
 export function Statistics() {
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  })
-
   return (
     <section className="py-20 bg-gray-50 dark:bg-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div
-          ref={ref}
-          className="grid grid-cols-2 md:grid-cols-4 gap-8"
-        >
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {stats.map((stat, index) => (
             <motion.div
               key={stat.label}
               initial={{ opacity: 0, y: 20 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
               transition={{ delay: index * 0.1 }}
               className="text-center"
             >

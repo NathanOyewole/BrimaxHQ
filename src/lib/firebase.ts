@@ -1,28 +1,64 @@
-import { initializeApp, getApps } from 'firebase/app'
-import { getFirestore } from 'firebase/firestore'
-import { getAuth } from 'firebase/auth'
-import { getAnalytics, isSupported } from 'firebase/analytics'
+import { initializeApp, getApps, FirebaseApp } from 'firebase/app'
+import { getFirestore, Firestore } from 'firebase/firestore'
+import { getAuth, Auth } from 'firebase/auth'
+import { getAnalytics, Analytics } from 'firebase/analytics'
+import { getFirebaseConfig } from './firebase-config'
 
-const firebaseConfig = {
-  // Add your Firebase configuration here
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+interface FirebaseServices {
+  app: FirebaseApp | null
+  db: Firestore | null
+  auth: Auth | null
+  analytics: Analytics | null
+  isInitialized: boolean
 }
 
-// Initialize Firebase
-const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
-const db = getFirestore(app)
-const auth = getAuth(app)
-
-// Initialize Analytics conditionally
-let analytics = null
-if (typeof window !== 'undefined') {
-  isSupported().then(yes => yes && (analytics = getAnalytics(app)))
+let firebaseServices: FirebaseServices = {
+  app: null,
+  db: null,
+  auth: null,
+  analytics: null,
+  isInitialized: false,
 }
 
-export { app, db, auth, analytics } 
+export const initializeFirebase = (): FirebaseServices => {
+  if (firebaseServices.isInitialized) {
+    return firebaseServices
+  }
+
+  try {
+    const config = getFirebaseConfig()
+    
+    if (!config) {
+      console.warn('Firebase configuration is missing. Some features may not work.')
+      return firebaseServices
+    }
+
+    const app = getApps().length === 0 ? initializeApp(config) : getApps()[0]
+    const db = getFirestore(app)
+    const auth = getAuth(app)
+    let analytics = null
+
+    if (typeof window !== 'undefined') {
+      getAnalytics(app).then(analyticsInstance => {
+        analytics = analyticsInstance
+      }).catch(error => {
+        console.warn('Analytics initialization failed:', error)
+      })
+    }
+
+    firebaseServices = {
+      app,
+      db,
+      auth,
+      analytics,
+      isInitialized: true,
+    }
+
+    return firebaseServices
+  } catch (error) {
+    console.error('Firebase initialization failed:', error)
+    return firebaseServices
+  }
+}
+
+export const { app, db, auth, analytics } = initializeFirebase() 
