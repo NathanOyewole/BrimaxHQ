@@ -37,13 +37,12 @@ export const initializeFirebase = (): FirebaseServices => {
     const db = getFirestore(app)
     const auth = getAuth(app)
     let analytics = null
-
     if (typeof window !== 'undefined') {
-      getAnalytics(app).then(analyticsInstance => {
-        analytics = analyticsInstance
-      }).catch(error => {
+      try {
+        analytics = getAnalytics(app)
+      } catch (error: unknown) {
         console.warn('Analytics initialization failed:', error)
-      })
+      }
     }
 
     firebaseServices = {

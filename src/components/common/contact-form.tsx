@@ -22,8 +22,8 @@ export function ContactForm() {
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true)
     setSubmitStatus(null)
-    
     try {
+      if (!db) throw new Error("Database not initialized");
       await addDoc(collection(db, "contacts"), {
         ...data,
         createdAt: new Date().toISOString(),
