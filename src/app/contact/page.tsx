@@ -1,3 +1,5 @@
+"use client"
+
 import { ContactForm } from "@/components/common/contact-form"
 import { motion } from "framer-motion"
 
