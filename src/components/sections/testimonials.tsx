@@ -49,7 +49,7 @@ export function Testimonials() {
               className="bg-white dark:bg-gray-900 p-8 rounded-lg shadow-lg"
             >
               <p className="text-gray-600 dark:text-gray-300 mb-4">
-                "{testimonial.content}"
+                &ldquo;{testimonial.content}&rdquo;
               </p>
               <div>
                 <p className="font-semibold text-gray-900 dark:text-white">

@@ -7,7 +7,7 @@ import { useFirebase } from '@/hooks/use-firebase'
 export function Newsletter() {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
-  const { addDocument, checkEmailExists, error, loading } = useFirebase()
+  const { addDocument, checkEmailExists } = useFirebase()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

@@ -4,6 +4,7 @@ import Link from "next/link"
 import { motion } from "framer-motion"
 import { blogPosts } from "@/data/blog-posts"
 import { useState } from "react"
+import Image from 'next/image'
 
 export default function Blog() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -70,9 +71,11 @@ export default function Blog() {
               className="bg-white dark:bg-gray-900 rounded-lg shadow-lg overflow-hidden"
             >
               <div className="relative h-48">
-                <img
+                <Image
                   src={post.image}
                   alt={post.title}
+                  width={800}
+                  height={400}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-opacity" />

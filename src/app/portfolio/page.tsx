@@ -3,6 +3,7 @@
 import { motion } from "framer-motion"
 import { portfolioProjects } from "@/data/portfolio"
 import { useState } from "react"
+import Image from 'next/image'
 
 const categories = ["All", ...new Set(portfolioProjects.map(project => project.category))]
 
@@ -55,10 +56,13 @@ export default function Portfolio() {
               className="bg-white dark:bg-gray-900 rounded-lg shadow-lg overflow-hidden"
             >
               <div className="relative h-48">
-                <img
+                <Image
                   src={project.image}
                   alt={project.title}
-                  className="w-full h-full object-cover"
+                  width={800}
+                  height={400}
+                  className="w-full h-48 object-cover"
+                  priority={index === 0}
                 />
                 <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-20 transition-opacity" />
               </div>

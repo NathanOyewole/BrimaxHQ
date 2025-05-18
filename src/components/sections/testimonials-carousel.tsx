@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Image from 'next/image'
 
 const testimonials = [
   {
@@ -50,13 +51,15 @@ export function TestimonialsCarousel() {
             className="text-center"
           >
             <div className="mb-8">
-              <img
+              <Image
                 src={testimonials[current].image}
                 alt={testimonials[current].author}
+                width={150}
+                height={150}
                 className="w-20 h-20 rounded-full mx-auto mb-4 object-cover"
               />
               <p className="text-xl text-gray-600 dark:text-gray-300 mb-4">
-                "{testimonials[current].content}"
+                &ldquo;{testimonials[current].content}&rdquo;
               </p>
               <div>
                 <p className="font-semibold text-gray-900 dark:text-white">
