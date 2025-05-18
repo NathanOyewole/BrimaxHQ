@@ -1,7 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ['images.unsplash.com'], // Add any other image domains you're using
     remotePatterns: [
       {
         protocol: 'https',
@@ -9,7 +8,16 @@ const nextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'source.unsplash.com',
+        port: '',
+        pathname: '/**',
+      }
     ],
+  },
+  experimental: {
+    serverComponentsExternalPackages: ['firebase'],
   },
 }
 

@@ -1,42 +1,34 @@
-import { initializeApp, getApps, FirebaseApp } from 'firebase/app'
+import { initializeApp, getApps, getApp } from 'firebase/app'
 import { getFirestore, Firestore } from 'firebase/firestore'
 import { getAuth, Auth } from 'firebase/auth'
 import { getAnalytics, Analytics } from 'firebase/analytics'
-import { getFirebaseConfig } from './firebase-config'
 
-interface FirebaseServices {
-  app: FirebaseApp | null
-  db: Firestore | null
-  auth: Auth | null
-  analytics: Analytics | null
-  isInitialized: boolean
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || '',
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || '',
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || '',
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || '',
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '',
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '',
 }
 
-let firebaseServices: FirebaseServices = {
-  app: null,
-  db: null,
-  auth: null,
-  analytics: null,
-  isInitialized: false,
-}
+// Initialize Firebase only if we have the minimum required config
+const isFirebaseConfigValid = Boolean(
+  firebaseConfig.apiKey &&
+  firebaseConfig.projectId &&
+  firebaseConfig.appId
+)
 
-export const initializeFirebase = (): FirebaseServices => {
-  if (firebaseServices.isInitialized) {
-    return firebaseServices
-  }
+let app
+let auth: Auth | null = null
+let db: Firestore | null = null
+let analytics = null
 
+if (isFirebaseConfigValid) {
   try {
-    const config = getFirebaseConfig()
-    
-    if (!config) {
-      console.warn('Firebase configuration is missing. Some features may not work.')
-      return firebaseServices
-    }
-
-    const app = getApps().length === 0 ? initializeApp(config) : getApps()[0]
-    const db = getFirestore(app)
-    const auth = getAuth(app)
-    let analytics = null
+    app = getApps().length ? getApp() : initializeApp(firebaseConfig)
+    auth = getAuth(app)
+    db = getFirestore(app)
     if (typeof window !== 'undefined') {
       try {
         analytics = getAnalytics(app)
@@ -44,20 +36,11 @@ export const initializeFirebase = (): FirebaseServices => {
         console.warn('Analytics initialization failed:', error)
       }
     }
-
-    firebaseServices = {
-      app,
-      db,
-      auth,
-      analytics,
-      isInitialized: true,
-    }
-
-    return firebaseServices
   } catch (error) {
-    console.error('Firebase initialization failed:', error)
-    return firebaseServices
+    console.error('Firebase initialization error:', error)
   }
+} else {
+  console.warn('Firebase configuration is missing. Some features may not work.')
 }
 
-export const { app, db, auth, analytics } = initializeFirebase() 
+export { app, auth, db, analytics } 
