@@ -1,7 +1,6 @@
 import { initializeApp, getApps, getApp } from 'firebase/app'
 import { getFirestore, Firestore } from 'firebase/firestore'
 import { getAuth, Auth } from 'firebase/auth'
-import { getAnalytics, Analytics } from 'firebase/analytics'
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || '',
@@ -22,20 +21,12 @@ const isFirebaseConfigValid = Boolean(
 let app
 let auth: Auth | null = null
 let db: Firestore | null = null
-let analytics = null
 
 if (isFirebaseConfigValid) {
   try {
     app = getApps().length ? getApp() : initializeApp(firebaseConfig)
     auth = getAuth(app)
     db = getFirestore(app)
-    if (typeof window !== 'undefined') {
-      try {
-        analytics = getAnalytics(app)
-      } catch (error: unknown) {
-        console.warn('Analytics initialization failed:', error)
-      }
-    }
   } catch (error) {
     console.error('Firebase initialization error:', error)
   }
@@ -43,4 +34,4 @@ if (isFirebaseConfigValid) {
   console.warn('Firebase configuration is missing. Some features may not work.')
 }
 
-export { app, auth, db, analytics } 
+export { app, auth, db } 

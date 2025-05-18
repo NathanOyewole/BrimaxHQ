@@ -16,9 +16,7 @@ const nextConfig = {
       }
     ],
   },
-  experimental: {
-    serverComponentsExternalPackages: ['firebase'],
-  },
+  serverExternalPackages: ['firebase'],
 }
 
 module.exports = nextConfig 
