@@ -38,7 +38,7 @@ export default function Contact() {
                   Email
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  nathanoyewole7@gmail.com
+                  brimaxhq@gmail.com
                 </p>
               </div>
               <div>
