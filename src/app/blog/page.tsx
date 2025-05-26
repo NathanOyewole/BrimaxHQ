@@ -9,12 +9,13 @@ import Image from 'next/image'
 export default function Blog() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
+  const [postsToShow, setPostsToShow] = useState(6)
 
   const allTags = Array.from(new Set(blogPosts.flatMap(post => post.tags)))
 
   const filteredPosts = blogPosts.filter(post => {
     const matchesSearch = post.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         post.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
+      post.excerpt.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesTag = !selectedTag || post.tags.includes(selectedTag)
     return matchesSearch && matchesTag
   })
@@ -49,11 +50,10 @@ export default function Blog() {
               <button
                 key={tag}
                 onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
-                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                  selectedTag === tag
+                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${selectedTag === tag
                     ? "bg-blue-600 text-white"
                     : "bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
-                }`}
+                  }`}
               >
                 {tag}
               </button>
@@ -62,7 +62,7 @@ export default function Blog() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredPosts.map((post, index) => (
+          {filteredPosts.slice(0, postsToShow).map((post, index) => (
             <motion.article
               key={post.id}
               initial={{ opacity: 0, y: 20 }}
@@ -118,6 +118,17 @@ export default function Blog() {
             </motion.article>
           ))}
         </div>
+
+        {postsToShow < filteredPosts.length && (
+          <div className="text-center mt-12">
+            <button
+              onClick={() => setPostsToShow(postsToShow + 3)}
+              className="px-6 py-3 rounded-lg bg-blue-600 text-white font-medium hover:bg-blue-700 transition-colors"
+            >
+              Read More
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
